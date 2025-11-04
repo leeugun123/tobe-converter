@@ -47,15 +47,6 @@ export function convertFile(inputHtml) {
   output = output.replace(/var\s+\w+\s*=\s*Polymer\s*\(/g, "Polymer(");
 
   /**
-   * 4️⃣ service-provider 호출 방식 변경
-   * UT.request → this.$.serviceId.service()
-   */
-  output = output.replace(
-    /UT\.request\s*\(\s*this\.\$\.(\w+)\s*\)/g,
-    "this.$.$1.service()"
-  );
-
-  /**
    * 5️⃣ alert / confirm / popup 관련 통일
    * SCAlert.show → UT.alert
    * SCPopupManager → UT.popup
@@ -70,15 +61,6 @@ export function convertFile(inputHtml) {
   output = output.replace(
     /SCSession\.getInstance\s*\(\s*\)/g,
     "SCSessionManager.getCurrentUser()"
-  );
-
-  /**
-   * 7️⃣ request 호출 및 service provider 구조 통일
-   * (이전 Polymer initApp → UT.request → this.$.searchSP.service())
-   */
-  output = output.replace(
-    /this\.\$\.(\w+)\.service\s*\(\s*\)/g,
-    "this.$.$1.service()"
   );
 
   /**
@@ -97,17 +79,6 @@ export function convertFile(inputHtml) {
   output = output.replace(/DateField\.dateToString/g, "UT.formatDate");
 
   /**
-   * 🔟 SCCollection, SCObject 초기화 구조 정돈
-   */
-  output = output.replace(/new SCCollection\s*\(\s*\)/g, "new SCCollection()");
-  output = output.replace(/new SCObject\s*\(\s*\)/g, "new SCObject()");
-
-  /**
-   * ⓫ callLater 제거 → 즉시 실행 (Vue/Polymer 최신)
-   */
-  output = output.replace(/this\.callLater\s*\([^)]*\);?/g, "");
-
-  /**
    * ⓬ 그리드 관련 속성 정리
    * - use-dummy="true" → 유지
    * - show-number-line="false" 추가
@@ -124,15 +95,6 @@ export function convertFile(inputHtml) {
    * <!--Format정보 ...--> → 삭제
    */
   output = output.replace(/<!--\s*Format정보[^>]*-->/g, "");
-
-  /**
-   * ⓮ on-item-click 이벤트 핸들러 이름 통일
-   * itemClickHandler → onItemClick
-   */
-  output = output.replace(
-    /on-item-click="itemClickHandler"/g,
-    'on-item-click="onItemClick"'
-  );
 
   /**
    * ⓯ 스타일 함수 이름 변경
