@@ -1,26 +1,46 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="p-6">
+    <h1 class="text-xl font-bold mb-1">EMRO → TO-BE HTML 변환기</h1>
+
+    <input type="file" @change="onFileUpload" accept=".html" />
+
+    <div v-if="converted" class="mt-4">
+      <textarea class="w-full h-96 font-mono" v-model="converted"></textarea>
+      <button
+        @click="download"
+        class="mt-2 bg-blue-500 text-white px-3 py-1 rounded"
+      >
+        다운로드
+      </button>
+    </div>
+  </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+import { ref } from "vue";
+import { convertFile } from "./utils/converter";
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+const converted = ref("");
+
+function onFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let html = reader.result;
+    convertFile.forEach((rule) => {
+      html = html.replace(rule.from, rule.to);
+    });
+    converted.value = html;
+  };
+  reader.readAsText(file);
+}
+
+function download() {
+  const blob = new Blob([converted.value], { type: "text/html" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "converted.html";
+  link.click();
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
