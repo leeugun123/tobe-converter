@@ -1,9 +1,9 @@
 <template>
-  <q-page class="q-pa-xl bg-grey-2">
+  <q-page class="q-pa-xl q-px-xl bg-grey-1">
     <!-- 상단 제목 -->
     <div class="text-center q-mb-lg">
       <div class="text-h5 text-primary text-bold">
-        🧩 EMRO → TO-BE HTML 변환기
+        🧩 AS-IS → TO-BE HTML 변환기
       </div>
       <div class="text-subtitle2 text-grey-7">
         왼쪽에 HTML을 붙여넣으면 자동 변환됩니다.
@@ -11,7 +11,7 @@
     </div>
 
     <!-- 좌우 50:50 -->
-    <div class="row q-col-gutter-xl">
+    <div class="row q-col-gutter-xl q-px-md">
       <!-- 왼쪽: 입력 영역 -->
       <div class="col-6">
         <q-card flat bordered>
