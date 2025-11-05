@@ -5,11 +5,9 @@
     <input type="file" @change="onFileUpload" accept=".html" />
 
     <div v-if="converted" class="mt-4">
-      <textarea class="w-full h-96 font-mono" v-model="converted"></textarea>
       <button
         @click="download"
-        class="mt-2 bg-blue-500 text-white px-3 py-1 rounded"
-      >
+        class="mt-2 bg-blue-500 text-white px-3 py-1 rounded">
         다운로드
       </button>
     </div>
@@ -27,11 +25,8 @@ function onFileUpload(e) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    let html = reader.result;
-    convertFile.forEach((rule) => {
-      html = html.replace(rule.from, rule.to);
-    });
-    converted.value = html;
+    const html = String(reader.result || ""); 
+    converted.value = convertFile(html);
   };
   reader.readAsText(file);
 }
