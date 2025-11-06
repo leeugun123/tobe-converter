@@ -26,6 +26,7 @@ export function convertFile(inputHtml) {
     /SCSession\.getInstance\s*\(\s*\)/g,
     "SCSessionManager.getCurrentUser()"
   );
+  
   /**
    * Dom Module 선언부 주석 제거
    *  Polymer 초기화 방식 변경
@@ -81,11 +82,12 @@ export function convertFile(inputHtml) {
     "fire('close')"
   );
 
-  //  event.itemRenderer → event.detail 구조 변경
+ //  event.itemRenderer → event.detail 구조 변경
   output = output.replace(
-    /var\s+dataField\s*=\s*event\.itemRenderer\["dataField"\"];\s*var\s+item\s*=\s*event\.itemRenderer\["data"\];/g,
+    /var\s+dataField\s*=\s*event\.itemRenderer\["dataField"\];\s*var\s+item\s*=\s*event\.itemRenderer\["data"\];/g,
     'var dataField = event.detail.item.dataField;\nvar item = event.detail.data;'
   );
+
 
   // ✅ Application.application.mdi.mdiContent → UT.createWindow
   output = output.replace(
