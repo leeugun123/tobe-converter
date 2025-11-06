@@ -28,7 +28,7 @@ export function convertFile(inputHtml) {
   );
   
   /**
-   * Dom Module 선언부 주석 제거
+   * 
    *  Polymer 초기화 방식 변경
    * var ESOrdSel1 = Polymer({...}) → Polymer({...})
    */
@@ -82,12 +82,20 @@ export function convertFile(inputHtml) {
     "fire('close')"
   );
 
- //  event.itemRenderer → event.detail 구조 변경
-  output = output.replace(
-    /var\s+dataField\s*=\s*event\.itemRenderer\["dataField"\];\s*var\s+item\s*=\s*event\.itemRenderer\["data"\];/g,
-    'var dataField = event.detail.item.dataField;\nvar item = event.detail.data;'
-  );
-
+ /**
+ * ✅ event.itemRenderer → event.detail 변환
+ */
+  output = output
+  // dataField 처리
+  .replace(
+    /\bvar\s+dataField\s*=\s*event\.itemRenderer\["dataField"\];?/g,
+    "var dataField = event.detail.item.dataField;"
+  )
+  // data 처리
+  .replace(
+    /\bvar\s+item\s*=\s*event\.itemRenderer\["data"\];?/g,
+    "var item = event.detail.data;"
+  );  
 
   // ✅ Application.application.mdi.mdiContent → UT.createWindow
   output = output.replace(
