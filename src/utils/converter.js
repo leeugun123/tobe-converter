@@ -125,5 +125,22 @@ output = output
   output = output.replace(/\bDateField\s*\.\s*stringToDate\b/g, "UT.toDate");
 
 
+  /**
+ * 🔟 getOldEditingValue / getNewEditingValue 변환
+ */
+  output = output
+  // old value 변환
+  .replace(
+    /\bvar\s+oldVal\s*=\s*event\.currentTarget\.getOldEditingValue\s*\(\s*event\s*\)\s*;?/g,
+    "var oldVal = event.detail.oldValue;"
+  )
+  // new value 변환
+  .replace(
+    /\bvar\s+newVal\s*=\s*event\.currentTarget\.getNewEditingValue\s*\(\s*event\s*\)\s*;?/g,
+    "var newVal = event.detail.newValue;"
+  );
+
+
+
   return output;
 }
