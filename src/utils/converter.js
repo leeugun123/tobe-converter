@@ -67,7 +67,7 @@ output = output
  *   precision:2 → amt
  *   precision:3 → qty
  */
-
+/*
 output = output
   // precision:0 → number
   .replace(
@@ -84,6 +84,7 @@ output = output
     /<!--[^>]*precision\s*:\s*3[^>]*-->\s*\n\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
     '<sc-data-column$1format-type="qty"'
   );
+*/
 
   /**
    * 12️⃣ SCSession.user["..."] → session.prop
@@ -136,16 +137,16 @@ output = output
   /**
  * 🔟 getOldEditingValue / getNewEditingValue 변환
  */
-  output = output
-  // old value 변환
+output = output
+  // old value 변환 (변수명 무관)
   .replace(
-    /\bvar\s+oldVal\s*=\s*event\.currentTarget\.getOldEditingValue\s*\(\s*event\s*\)\s*;?/g,
-    "var oldVal = event.detail.oldValue;"
+    /event\.currentTarget\.getOldEditingValue\s*\(\s*event\s*\)/g,
+    "event.detail.oldValue"
   )
-  // new value 변환
+  // new value 변환 (변수명 무관)
   .replace(
-    /\bvar\s+newVal\s*=\s*event\.currentTarget\.getNewEditingValue\s*\(\s*event\s*\)\s*;?/g,
-    "var newVal = event.detail.newValue;"
+    /event\.currentTarget\.getNewEditingValue\s*\(\s*event\s*\)/g,
+    "event.detail.newValue"
   );
 
   /**
