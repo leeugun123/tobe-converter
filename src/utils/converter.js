@@ -36,13 +36,13 @@ export function convertFile(inputHtml) {
   );
 
 
-  /**
-   * 7️⃣ translator 관련 제거
-   */
-  output = output
-  // translator 블록 전체 제거 (콤마·주석·개행 포함)
+/**
+ * 7️⃣ translator 관련 제거 (완전 삭제 + 잔여 `},` 줄 제거)
+ */
+output = output
+  // translator 블록 전체 제거 (콤마/주석/개행 포함)
   .replace(
-    /^[ \t]*translator\s*:\s*\{[\s\S]*?\}[ \t]*(,)?[ \t]*(\/\/[^\n]*)?[\r\n]*/gim,
+    /^[ \t]*translator\s*:\s*\{[\s\S]*?\}\s*,?\s*(?:\/\/[^\n]*)?[\r\n]+/gim,
     ""
   )
   // this.translator.translate → this.translate
@@ -76,6 +76,7 @@ export function convertFile(inputHtml) {
    */
   output = output.replace(/format-type\s*=\s*["']number2Format["']/g, 'format-type="number"');
 
+
   /**
    * 12️⃣ SCSession.user["..."] → session.prop
    */
@@ -107,6 +108,11 @@ export function convertFile(inputHtml) {
       UT.createWindow(menuCode, title, url);
     }`
   );
+
+/**
+ * 8️⃣ export() → excelExport() 변환
+ */
+  output = output.replace(/\bexport\s*\(\s*\)/g, "excelExport()");
 
   return output;
 }
