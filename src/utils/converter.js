@@ -114,5 +114,12 @@ output = output
  */
   output = output.replace(/\bexport\s*\(\s*\)/g, "excelExport()");
 
+/**
+ * 9️⃣ !this.$.[아무이름].validate() → !this.validate()
+ */
+ output = output.replace(/!\s*this\.\$\.\s*[a-zA-Z_$][\w$]*\s*\.\s*validate\s*\(\s*\)/g, "!this.validate()");
+
+
+
   return output;
 }
