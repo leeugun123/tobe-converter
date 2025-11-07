@@ -140,6 +140,25 @@ output = output
     "var newVal = event.detail.newValue;"
   );
 
+  /**
+ * 11️⃣ scrollToIndex → setTopIndex 변환
+ */
+output = output.replace(
+  /\bscrollToIndex\s*\(\s*this\.\$\.\s*datagrid\.selectedIndex\s*\)/g,
+  "setTopIndex(this.$.datagrid.selectedIndex)"
+);
+
+/**
+ * 12️⃣ rpcService.disabledTargetsOnInvoking 설정 제거
+ * ex) this.$.getListRPC.rpcService.disabledTargetsOnInvoking = [this];
+ */
+output = output.replace(
+  /^[ \t]*this\.\$\.\w+\.rpcService\.disabledTargetsOnInvoking\s*=\s*\[this\];?\s*$/gm,
+  ""
+);
+
+
+
 
 
   return output;
