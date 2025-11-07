@@ -26,8 +26,15 @@ export function convertFile(inputHtml) {
    * 6️⃣ event.itemRenderer 처리
    */
   output = output
-    .replace(/\bvar\s+dataField\s*=\s*event\.itemRenderer\["dataField"\];?/g, "var dataField = event.detail.item.dataField;")
-    .replace(/\bvar\s+item\s*=\s*event\.itemRenderer\.data;?/g, "var item = event.detail.data;");
+  .replace(
+    /\bvar\s+([A-Za-z_$][\w$]*)\s*=\s*event\.itemRenderer\[\s*['"]dataField['"]\s*\]\s*;?/g,
+    "var $1 = event.detail.item.dataField;"
+  )
+  .replace(
+    /\bvar\s+([A-Za-z_$][\w$]*)\s*=\s*event\.itemRenderer\.data\s*;?/g,
+    "var $1 = event.detail.data;"
+  );
+
 
   /**
    * 7️⃣ translator 관련 제거
