@@ -39,8 +39,11 @@ export function convertFile(inputHtml) {
   /**
    * 7️⃣ translator 관련 제거
    */
-  output = output.replace(/translator\s*:\s*\{[\s\S]*?\},?/g, "");
-  output = output.replace(/\bthis\.translator\.translate\s*\(/g, "this.translate(");
+  output = output
+  // translator 객체 프로퍼티 제거 (콤마/줄바꿈 유연하게)
+  .replace(/translator\s*:\s*\{[\s\S]*?\}\s*,?/gm, "")
+  // translator 메서드 접근 단순화
+  .replace(/\bthis\s*\.\s*translator\s*\.\s*translate\s*\(/g, "this.translate(");
 
   /**
    * 8️⃣ Polymer var 제거
