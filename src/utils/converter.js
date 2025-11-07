@@ -114,11 +114,15 @@ output = output
  */
   output = output.replace(/\bexport\s*\(\s*\)/g, "excelExport()");
 
-/**
- * 9️⃣ !this.$.[아무이름].validate() → !this.validate()
- */
- output = output.replace(/!\s*this\.\$\.\s*[a-zA-Z_$][\w$]*\s*\.\s*validate\s*\(\s*\)/g, "!this.validate()");
+  /**
+   * 9️⃣ !this.$.[아무이름].validate() → !this.validate()
+   */
+  output = output.replace(/!\s*this\.\$\.\s*[a-zA-Z_$][\w$]*\s*\.\s*validate\s*\(\s*\)/g, "!this.validate()");
 
+  /**
+   * 🔟 DateField.stringToDate → UT.toDate 변환
+   */
+  output = output.replace(/\bDateField\s*\.\s*stringToDate\b/g, "UT.toDate");
 
 
   return output;
