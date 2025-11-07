@@ -183,48 +183,6 @@ output = output.replace(
 );
 
 /**
- * 🔹 this.$.<name>.inputs = [new SCServiceInput("a", b), new SCServiceInput("c", d)]
- *     → this.$.<name>.addInput("a", b); this.$.<name>.addInput("c", d);
- *
- * 🔹 this.$.<name>.outputs = [new SCServiceOutput("x", y)]
- *     → this.$.<name>.addOutput("x", y);
- */
-output = output
-  // inputs 변환
-  .replace(
-    /\bthis\.\$\.(\w+)\.inputs\s*=\s*\[([\s\S]*?)\]\s*;?/g,
-    (match, rpcName, inner) => {
-      return inner
-        .split(/new\s+SCServiceInput\s*\(/)
-        .slice(1)
-        .map(entry => {
-          const parts = entry.match(/(['"])([^'"]+)\1\s*,\s*([^)\]]+)/);
-          if (!parts) return "";
-          const [, , paramName, paramValue] = parts;
-          return `this.$.${rpcName}.addInput("${paramName}", ${paramValue.trim()});`;
-        })
-        .join("\n");
-    }
-  )
-  // outputs 변환
-  .replace(
-    /\bthis\.\$\.(\w+)\.outputs\s*=\s*\[([\s\S]*?)\]\s*;?/g,
-    (match, rpcName, inner) => {
-      return inner
-        .split(/new\s+SCServiceOutput\s*\(/)
-        .slice(1)
-        .map(entry => {
-          const parts = entry.match(/(['"])([^'"]+)\1\s*,\s*([^)\]]+)/);
-          if (!parts) return "";
-          const [, , paramName, paramValue] = parts;
-          return `this.$.${rpcName}.addOutput("${paramName}", ${paramValue.trim()});`;
-        })
-        .join("\n");
-    }
-  );
-
-
-/**
  * 🔹 UT.alert("문구") → UT.alert(this.translate("문구"))
  *   (단, 이미 translate로 감싸진 건 제외)
  */
