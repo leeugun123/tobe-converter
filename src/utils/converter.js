@@ -67,22 +67,6 @@ output = output
  *   precision:2 → amt
  *   precision:3 → qty
  */
-output = output
-  // precision:0 → number
-  .replace(
-    /<!--[\s\S]*?precision\s*:\s*0[\s\S]*?-->\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
-    '<sc-data-column$1format-type="number"'
-  )
-  // precision:2 → amt
-  .replace(
-    /<!--[\s\S]*?precision\s*:\s*2[\s\S]*?-->\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
-    '<sc-data-column$1format-type="amt"'
-  )
-  // precision:3 → qty
-  .replace(
-    /<!--[\s\S]*?precision\s*:\s*3[\s\S]*?-->\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
-    '<sc-data-column$1format-type="qty"'
-  );
 
 
 
@@ -166,6 +150,67 @@ output = output.replace(
   ""
 );
 
+/**
+ * 🔹 this.$.<변수명>.clearParameter(); 제거
+ */
+output = output.replace(
+  /^[ \t]*this\.\$\.\w+\.clearParameter\s*\(\s*\)\s*;?\s*$/gm,
+  ""
+);
+
+/**
+ * 🔹 this.$.<변수명>.bind() → this.$.<변수명>.service()
+ */
+output = output.replace(
+  /\bthis\.\$\.(\w+)\.bind\s*\(\s*\)\s*;?/g,
+  "this.$.$1.service();"
+);
+
+/**
+ * 🔹 this.$.<변수명1>.outputs = [new SCServiceOutput("변수명2", this.<변수명3>)];
+ *     → this.$.<변수명1>.addOutput("변수명2", this.<변수명3>);
+ */
+output = output.replace(
+  /\bthis\.\$\.(\w+)\.outputs\s*=\s*\[\s*new\s+SCServiceOutput\s*\(\s*(['"])([^'"]+)\2\s*,\s*(this\.\w+)\s*\)\s*\]\s*;?/g,
+  "this.$.$1.addOutput(\"$3\", $4);"
+);
+
+/**
+ * 🔹 this.$.<변수명1>.inputs = [new SCServiceInput("변수명2", this.<변수명3>)] ;
+ *     → this.$.<변수명1>.addInput("변수명2", this.<변수명3>);
+ */
+
+output = output.replace(
+  /\bthis\.\$\.(\w+)\.inputs\s*=\s*\[\s*new\s+SCServiceInput\s*\(\s*(['"])([^'"]+)\2\s*,\s*(this\.\w+)\s*\)\s*\]\s*;?/g,
+  "this.$.$1.addInput(\"$3\", $4);"
+);
+
+/**
+ * 🔹 UT.alert("문구") → UT.alert(this.translate("문구"))
+ *   (단, 이미 translate로 감싸진 건 제외)
+ */
+output = output.replace(
+  /\bUT\.alert\s*\(\s*(?!this\.translate\()(['"`])([\s\S]*?)\1\s*\)/g,
+  'UT.alert(this.translate("$2"))'
+);
+
+/**
+ * 🔹 dataProviderFunc 내 filterItems → filter (화살표 함수)
+ *    예: this._list.filterItems({ 'key': item.key })
+ *        → this._list.filter(obj => obj.key === item.key)
+ */
+output = output.replace(
+  /\bthis\.(\w+)\.filterItems\s*\(\s*\{\s*['"](\w+)['"]\s*:\s*item\.(\w+)\s*\}\s*\)/g,
+  "this.$1.filter(obj => obj.$2 === item.$3)"
+);
+
+/**
+ * 🔹 SCSessionManager.getCurrentUser().user.<key> → this.session.<key>
+ */
+output = output.replace(
+  /\bSCSessionManager\.getCurrentUser\(\)\.user\.(\w+)/g,
+  "this.session.$1"
+);
 
 
   return output;
