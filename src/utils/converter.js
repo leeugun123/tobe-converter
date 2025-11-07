@@ -62,6 +62,11 @@ export function convertFile(inputHtml) {
   output = output.replace(/,\s*behaviors\s*:\s*\[\s*\]/g, "");
 
   /**
+   * 11️⃣ format-type="number0Format" → "number"
+   */
+  output = output.replace(/format-type\s*=\s*["']number0Format["']/g, 'format-type="number"');
+
+  /**
    * 11️⃣ format-type="number1Format" → "number"
    */
   output = output.replace(/format-type\s*=\s*["']number1Format["']/g, 'format-type="number"');
