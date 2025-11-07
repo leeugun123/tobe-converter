@@ -68,7 +68,22 @@ output = output
  *   precision:3 → qty
  */
 
-
+output = output
+  // precision:0 → number
+  .replace(
+    /<!--[^>]*precision\s*:\s*0[^>]*-->\s*\n\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
+    '<sc-data-column$1format-type="number"'
+  )
+  // precision:2 → amt
+  .replace(
+    /<!--[^>]*precision\s*:\s*2[^>]*-->\s*\n\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
+    '<sc-data-column$1format-type="amt"'
+  )
+  // precision:3 → qty
+  .replace(
+    /<!--[^>]*precision\s*:\s*3[^>]*-->\s*\n\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
+    '<sc-data-column$1format-type="qty"'
+  );
 
   /**
    * 12️⃣ SCSession.user["..."] → session.prop
