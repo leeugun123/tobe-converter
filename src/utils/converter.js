@@ -183,23 +183,46 @@ output = output.replace(
 );
 
 /**
- * 🔹 this.$.<변수명1>.outputs = [new SCServiceOutput("변수명2", this.<변수명3>)];
- *     → this.$.<변수명1>.addOutput("변수명2", this.<변수명3>);
+ * 🔹 this.$.<name>.inputs = [new SCServiceInput("a", b), new SCServiceInput("c", d)]
+ *     → this.$.<name>.addInput("a", b); this.$.<name>.addInput("c", d);
+ *
+ * 🔹 this.$.<name>.outputs = [new SCServiceOutput("x", y)]
+ *     → this.$.<name>.addOutput("x", y);
  */
-output = output.replace(
-  /\bthis\.\$\.(\w+)\.outputs\s*=\s*\[\s*new\s+SCServiceOutput\s*\(\s*(['"])([^'"]+)\2\s*,\s*(this\.\w+)\s*\)\s*\]\s*;?/g,
-  "this.$.$1.addOutput(\"$3\", $4);"
-);
+output = output
+  // inputs 변환
+  .replace(
+    /\bthis\.\$\.(\w+)\.inputs\s*=\s*\[([\s\S]*?)\]\s*;?/g,
+    (match, rpcName, inner) => {
+      return inner
+        .split(/new\s+SCServiceInput\s*\(/)
+        .slice(1)
+        .map(entry => {
+          const parts = entry.match(/(['"])([^'"]+)\1\s*,\s*([^)\]]+)/);
+          if (!parts) return "";
+          const [, , paramName, paramValue] = parts;
+          return `this.$.${rpcName}.addInput("${paramName}", ${paramValue.trim()});`;
+        })
+        .join("\n");
+    }
+  )
+  // outputs 변환
+  .replace(
+    /\bthis\.\$\.(\w+)\.outputs\s*=\s*\[([\s\S]*?)\]\s*;?/g,
+    (match, rpcName, inner) => {
+      return inner
+        .split(/new\s+SCServiceOutput\s*\(/)
+        .slice(1)
+        .map(entry => {
+          const parts = entry.match(/(['"])([^'"]+)\1\s*,\s*([^)\]]+)/);
+          if (!parts) return "";
+          const [, , paramName, paramValue] = parts;
+          return `this.$.${rpcName}.addOutput("${paramName}", ${paramValue.trim()});`;
+        })
+        .join("\n");
+    }
+  );
 
-/**
- * 🔹 this.$.<변수명1>.inputs = [new SCServiceInput("변수명2", this.<변수명3>)] ;
- *     → this.$.<변수명1>.addInput("변수명2", this.<변수명3>);
- */
-
-output = output.replace(
-  /\bthis\.\$\.(\w+)\.inputs\s*=\s*\[\s*new\s+SCServiceInput\s*\(\s*(['"])([^'"]+)\2\s*,\s*(this\.\w+)\s*\)\s*\]\s*;?/g,
-  "this.$.$1.addInput(\"$3\", $4);"
-);
 
 /**
  * 🔹 UT.alert("문구") → UT.alert(this.translate("문구"))
