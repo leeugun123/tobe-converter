@@ -40,9 +40,12 @@ export function convertFile(inputHtml) {
    * 7️⃣ translator 관련 제거
    */
   output = output
-  // translator 객체 프로퍼티 제거 (콤마/줄바꿈 유연하게)
-  .replace(/translator\s*:\s*\{[\s\S]*?\}\s*,?/gm, "")
-  // translator 메서드 접근 단순화
+  // translator 블록 + trailing 콤마/주석/개행 제거
+  .replace(
+    /translator\s*:\s*\{[\s\S]*?\}\s*,?\s*(?:\/\/[^\n]*)?\n?/gm,
+    ""
+  )
+  // this.translator.translate() → this.translate()
   .replace(/\bthis\s*\.\s*translator\s*\.\s*translate\s*\(/g, "this.translate(");
 
   /**
