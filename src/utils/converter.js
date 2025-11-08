@@ -64,29 +64,18 @@ export function convertFile(inputHtml) {
   output = output.replace(/,\s*behaviors\s*:\s*\[\s*\]/g, "");
 
   /**
-   * 🔹 precision 값에 따라 format-type 자동 변경
-   *   precision:0 → number
-   *   precision:2 → amt
-   *   precision:3 → qty
+   * 🔹 format-type 값에 따라 자동 변경
+   *   number0Format → number
+   *   number2Format → amt
+   *   number3Format → qty
    */
-  /*
-output = output
-  // precision:0 → number
-  .replace(
-    /<!--[^>]*precision\s*:\s*0[^>]*-->\s*\n\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
-    '<sc-data-column$1format-type="number"'
-  )
-  // precision:2 → amt
-  .replace(
-    /<!--[^>]*precision\s*:\s*2[^>]*-->\s*\n\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
-    '<sc-data-column$1format-type="amt"'
-  )
-  // precision:3 → qty
-  .replace(
-    /<!--[^>]*precision\s*:\s*3[^>]*-->\s*\n\s*<sc-data-column([^>]+)format-type\s*=\s*["'][^"']*["']/g,
-    '<sc-data-column$1format-type="qty"'
-  );
-*/
+  output = output
+    // number0Format → number
+    .replace(/format-type\s*=\s*["']number0Format["']/g, 'format-type="number"')
+    // number2Format → amt
+    .replace(/format-type\s*=\s*["']number2Format["']/g, 'format-type="amt"')
+    // number3Format → qty
+    .replace(/format-type\s*=\s*["']number3Format["']/g, 'format-type="qty"');
 
   /**
    * 12️⃣ SCSession.user["..."] → session.prop
