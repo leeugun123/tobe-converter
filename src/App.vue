@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-xl q-px-xl bg-grey-1">
+  <q-page class="q-pa-xl q-px-xl">
     <!-- 상단 제목 -->
     <div class="text-center q-mb-lg">
       <div class="text-h5 text-primary text-bold">
@@ -21,8 +21,10 @@
           <q-separator />
           <q-card-section>
             <textarea
+              ref="leftTextarea"
               v-model="inputHtml"
               @input="autoConvert"
+              @scroll="syncScroll('left')"
               placeholder="여기에 변환할 HTML 코드를 붙여넣으세요..."
               class="textarea-box"
             ></textarea>
@@ -39,8 +41,10 @@
           <q-separator />
           <q-card-section>
             <textarea
+              ref="rightTextarea"
               v-model="converted"
               readonly
+              @scroll="syncScroll('right')"
               placeholder="여기에 변환된 코드가 표시됩니다."
               class="textarea-box output"
             ></textarea>
@@ -57,9 +61,32 @@ import { convertFile } from "@/utils/converter";
 
 const inputHtml = ref("");
 const converted = ref("");
+const leftTextarea = ref(null);
+const rightTextarea = ref(null);
+let isSyncing = false;
 
 function autoConvert() {
   converted.value = inputHtml.value ? convertFile(inputHtml.value) : "";
+}
+
+function syncScroll(source) {
+  if (isSyncing) return;
+  isSyncing = true;
+
+  const left = leftTextarea.value;
+  const right = rightTextarea.value;
+
+  if (source === "left" && right) {
+    right.scrollTop = left.scrollTop;
+    right.scrollLeft = left.scrollLeft;
+  } else if (source === "right" && left) {
+    left.scrollTop = right.scrollTop;
+    left.scrollLeft = right.scrollLeft;
+  }
+
+  requestAnimationFrame(() => {
+    isSyncing = false;
+  });
 }
 </script>
 
@@ -72,13 +99,13 @@ function autoConvert() {
   border-radius: 8px;
   resize: none;
   font-family: "Fira Code", "Courier New", monospace;
-  font-size: 12px; /* 🔹 글자 크기 축소 */
-  line-height: 1.3; /* 🔹 줄 간격 줄임 */
+  font-size: 12px;
+  line-height: 1.3;
   background-color: #fff;
   color: #333;
   box-sizing: border-box;
   white-space: pre;
-  overflow-x: auto;
+  overflow: auto; /* 🔹 수평 스크롤 허용 */
 }
 
 .textarea-box.output {
