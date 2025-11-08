@@ -206,5 +206,20 @@ export function convertFile(inputHtml) {
     "this.session.$1"
   );
 
+  // replace both literal "\n" (backslash + n) and actual newlines inside attribute values
+  output = output
+    // double-quoted attributes
+    .replace(/="([^"]*?)"/g, (match, val) => {
+      if (val.indexOf("\\n") === -1 && val.indexOf("\n") === -1) return match;
+      const replaced = val.replace(/\\n/g, "&#13;").replace(/\n/g, "&#13;");
+      return `="${replaced}"`;
+    })
+    // single-quoted attributes
+    .replace(/='([^']*?)'/g, (match, val) => {
+      if (val.indexOf("\\n") === -1 && val.indexOf("\n") === -1) return match;
+      const replaced = val.replace(/\\n/g, "&#13;").replace(/\n/g, "&#13;");
+      return `='${replaced}'`;
+    });
+
   return output;
 }
