@@ -39,11 +39,13 @@ export function convertFile(inputHtml) {
    * 7️⃣ translator 관련 제거 (완전 삭제 + 잔여 `},` 줄 제거)
    */
   output = output
+  /*
     // translator 블록 전체 제거 (콤마/주석/개행 포함)
     .replace(
       /^[ \t]*translator\s*:\s*\{[\s\S]*?\}\s*,?\s*(?:\/\/[^\n]*)?[\r\n]+/gim,
       ""
     )
+  */
     // this.translator.translate → this.translate
     .replace(
       /\bthis\s*\.\s*translator\s*\.\s*translate\s*\(/g,
