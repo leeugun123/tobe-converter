@@ -13,7 +13,7 @@ if (/session\s*:\s*\{\s*type\s*:\s*Object\s*,\s*value\s*:\s*function\s*\(\)\s*\{
   output = output.replace(
     /this\.session\.user\[['"](\w+)['"]\]/g,
     "this.session.$1"
-  );
+  ); 
 } else {
   // ❌ session 정의 없음 → SCSessionManager.getCurrentUser() 사용
   output = output.replace(
@@ -220,13 +220,6 @@ output = output.replace(
     "this.$1.filter(obj => obj.$2 === item.$3)"
   );
 
-  /**
-   * 🔹 SCSessionManager.getCurrentUser().user.<key> → this.session.<key>
-   */
-  output = output.replace(
-    /\bSCSessionManager\.getCurrentUser\(\)\.user\.(\w+)/g,
-    "this.session.$1"
-  );
 
   // replace both literal "\n" (backslash + n) and actual newlines inside attribute values
  // "..." 또는 '...' 안에 있는 \n 만 치환

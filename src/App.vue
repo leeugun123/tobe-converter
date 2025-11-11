@@ -9,7 +9,7 @@
         왼쪽에 HTML을 붙여넣으면 자동 변환됩니다.
       </div>
     </div>
-
+    
     <!-- 좌우 50:50 -->
     <div class="row q-col-gutter-xl q-px-md">
       <!-- 왼쪽: 입력 영역 -->
@@ -39,7 +39,7 @@
             변환 결과
           </q-card-section>
           <q-separator />
-          <q-card-section>
+          <q-card-section class="relative-position">
             <textarea
               ref="rightTextarea"
               v-model="converted"
@@ -52,13 +52,25 @@
         </q-card>
       </div>
     </div>
+
+    <q-btn
+      color="primary"
+      icon="content_copy"
+      label="복사하기"
+      class="copy-btn"
+      @click="copyToClipboard"
+      :disable="!converted"
+    />
+            
   </q-page>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { useQuasar } from "quasar";
 import { convertFile } from "@/utils/converter";
 
+const $q = useQuasar();
 const inputHtml = ref("");
 const converted = ref("");
 const leftTextarea = ref(null);
@@ -88,31 +100,54 @@ function syncScroll(source) {
     isSyncing = false;
   });
 }
+
+async function copyToClipboard() {
+  try {
+    await navigator.clipboard.writeText(converted.value);
+    $q.notify({
+      type: "positive",
+      message: "변환된 코드가 클립보드에 복사되었습니다!",
+      position: "top-right",
+      timeout: 1500,
+    });
+  } catch (err) {
+    $q.notify({
+      type: "negative",
+      message: "복사에 실패했습니다.",
+      position: "top-right",
+    });
+  }
+}
 </script>
 
 <style scoped>
 .textarea-box {
   width: 100%;
-  height: 500px;
+  height: 650px; /* 🔹 높이 증가 */
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
   resize: none;
   font-family: "Fira Code", "Courier New", monospace;
   font-size: 12px;
-  line-height: 1.3;
+  line-height: 1.4;
   background-color: #fff;
   color: #333;
   box-sizing: border-box;
   white-space: pre;
-  overflow: auto; /* 🔹 수평 스크롤 허용 */
+  overflow: auto;
 }
 
 .textarea-box.output {
   background-color: #f9fafb;
 }
 
-.q-page {
-  min-height: 100vh;
+/* 🔹 복사 버튼 오른쪽 하단 고정 (fixed로 변경하여 항상 보이도록) */
+.copy-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
 }
+
 </style>
