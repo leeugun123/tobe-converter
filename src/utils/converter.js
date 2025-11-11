@@ -229,19 +229,11 @@ output = output.replace(
   );
 
   // replace both literal "\n" (backslash + n) and actual newlines inside attribute values
-  output = output
-    // double-quoted attributes
-    .replace(/="([^"]*?)"/g, (match, val) => {
-      if (val.indexOf("\\n") === -1 && val.indexOf("\n") === -1) return match;
-      const replaced = val.replace(/\\n/g, "&#13;").replace(/\n/g, "&#13;");
-      return `="${replaced}"`;
-    })
-    // single-quoted attributes
-    .replace(/='([^']*?)'/g, (match, val) => {
-      if (val.indexOf("\\n") === -1 && val.indexOf("\n") === -1) return match;
-      const replaced = val.replace(/\\n/g, "&#13;").replace(/\n/g, "&#13;");
-      return `='${replaced}'`;
-    });
+ // "..." 또는 '...' 안에 있는 \n 만 치환
+output = output.replace(
+  /(["'])([^"']*?)\\n([^"']*?)\1/g,
+  (match, quote, before, after) => `${quote}${before}&#13;${after}${quote}`
+);
 
   return output;
 }
