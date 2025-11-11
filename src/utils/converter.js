@@ -4,6 +4,24 @@
 export function convertFile(inputHtml) {
   let output = inputHtml;
 
+ /**
+ * 12️⃣ SCSession.user["..."] → session.prop
+ *    단, session 객체 선언이 없는 경우 SCSessionManager.getCurrentUser().prop 으로 대체
+ */
+if (/session\s*:\s*\{\s*type\s*:\s*Object\s*,\s*value\s*:\s*function\s*\(\)\s*\{\s*return\s+SCSession\.getInstance\s*\(\)\s*;?\s*\}\s*\}/.test(output)) {
+  // ✅ session 정의 존재 → this.session 사용
+  output = output.replace(
+    /this\.session\.user\[['"](\w+)['"]\]/g,
+    "this.session.$1"
+  );
+} else {
+  // ❌ session 정의 없음 → SCSessionManager.getCurrentUser() 사용
+  output = output.replace(
+    /this\.session\.user\[['"](\w+)['"]\]/g,
+    "SCSessionManager.getCurrentUser().$1"
+  );
+}
+
   /**
    * 3️⃣ SCSession → SCSessionManager
    */
@@ -79,13 +97,6 @@ export function convertFile(inputHtml) {
     // number3Format → qty
     .replace(/format-type\s*=\s*["']number3Format["']/g, 'format-type="qty"');
 
-  /**
-   * 12️⃣ SCSession.user["..."] → session.prop
-   */
-  output = output.replace(
-    /this\.session\.user\[['"](\w+)['"]\]/g,
-    "this.session.$1"
-  );
 
   /**
    *  그리드 관련 속성 정리
