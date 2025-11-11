@@ -53,22 +53,35 @@ if (/session\s*:\s*\{\s*type\s*:\s*Object\s*,\s*value\s*:\s*function\s*\(\)\s*\{
       "var $1 = event.detail.data;"
     );
 
-  /**
-   * 7️⃣ translator 관련 제거 (완전 삭제 + 잔여 `},` 줄 제거)
-   */
-  output = output
-  /*
-    // translator 블록 전체 제거 (콤마/주석/개행 포함)
-    .replace(
-      /^[ \t]*translator\s*:\s*\{[\s\S]*?\}\s*,?\s*(?:\/\/[^\n]*)?[\r\n]+/gim,
-      ""
-    )
-  */
-    // this.translator.translate → this.translate
-    .replace(
-      /\bthis\s*\.\s*translator\s*\.\s*translate\s*\(/g,
-      "this.translate("
-    );
+// 1) UT.alert: 첫번째 인수(문자열)만 this.translate("...")로 감싸기
+// - 이미 this.translate(...) 로 감싸져 있으면 건드리지 않음
+// - "문구", ... 처럼 다른 인수가 뒤에 오는 경우와 단독 호출 둘 다 처리
+output = output
+  // a) UT.alert("str", ...)  -> UT.alert(this.translate("str"), ...)
+  .replace(
+    /\bUT\.alert\s*\(\s*(?!this\.translate\()\s*(['"])((?:\\.|[^\\'"])*?)\1\s*,/g,
+    'UT.alert(this.translate("$2"),'
+  )
+  // b) UT.alert("str") -> UT.alert(this.translate("str"))
+  .replace(
+    /\bUT\.alert\s*\(\s*(?!this\.translate\()\s*(['"])((?:\\.|[^\\'"])*?)\1\s*\)/g,
+    'UT.alert(this.translate("$2"))'
+  );
+
+// 2) this.translate(...) 뒤에 불필요하게 붙은 하나의 ')' 제거
+//    예: this.translate("...")));  -> this.translate("..."));
+output = output.replace(
+  /(this\.translate\([^)]*\))\)\s*;/g,
+  '$1;'
+);
+
+// (선택적) 3) 동일한 문제를 세미콜론 없이 끝나는 표현에서도 정리
+//     예: foo(this.translate("...")));  -> foo(this.translate("..."));
+output = output.replace(
+  /(this\.translate\([^)]*\))\)\s*(?=[\r\n]|$)/g,
+  '$1'
+);
+
 
   /**
    * 8️⃣ Polymer var 제거
