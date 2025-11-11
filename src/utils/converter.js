@@ -53,26 +53,22 @@ if (/session\s*:\s*\{\s*type\s*:\s*Object\s*,\s*value\s*:\s*function\s*\(\)\s*\{
       "var $1 = event.detail.data;"
     );
 
-// 1) UT.alert: 첫번째 인수(문자열)만 this.translate("...")로 감싸기
-// - 이미 this.translate(...) 로 감싸져 있으면 건드리지 않음
-// - "문구", ... 처럼 다른 인수가 뒤에 오는 경우와 단독 호출 둘 다 처리
-output = output
-  // a) UT.alert("str", ...)  -> UT.alert(this.translate("str"), ...)
-  .replace(
-    /\bUT\.alert\s*\(\s*(?!this\.translate\()\s*(['"])((?:\\.|[^\\'"])*?)\1\s*,/g,
-    'UT.alert(this.translate("$2"),'
-  )
-  // b) UT.alert("str") -> UT.alert(this.translate("str"))
-  .replace(
-    /\bUT\.alert\s*\(\s*(?!this\.translate\()\s*(['"])((?:\\.|[^\\'"])*?)\1\s*\)/g,
-    'UT.alert(this.translate("$2"))'
-  );
-
-// 2) this.translate(...) 뒤에 불필요하게 붙은 하나의 ')' 제거
-//    예: this.translate("...")));  -> this.translate("..."));
+// 1) this.translator.translate(...)   -> this.translate(...)
 output = output.replace(
-  /(this\.translate\([^)]*\))\)\s*;/g,
-  '$1;'
+  /\bthis\s*\.\s*translator\s*\.\s*translate\s*\(/g,
+  "this.translate("
+);
+
+// 2) translator.translate(...)        -> this.translate(...)
+output = output.replace(
+  /\btranslator\s*\.\s*translate\s*\(/g,
+  "this.translate("
+);
+
+// 3) SCAlert.show(...) -> UT.alert(...) (이미 하셨다면 중복 적용되지 않음)
+output = output.replace(
+  /\bSCAlert\.show\s*\(/g,
+  "UT.alert("
 );
 
 // (선택적) 3) 동일한 문제를 세미콜론 없이 끝나는 표현에서도 정리
