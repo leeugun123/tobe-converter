@@ -281,5 +281,16 @@ output = output.replace(
   "this.$.$1.selectItem(this.$.$2)"
 );
 
+// 🔹 this.session.user.변수 → this.session.변수
+output = output.replace(
+  /this\.session\.user\.(\w+)/g,
+  "this.session.$1"
+);
+
+// 🔹 SCSessionManager.getCurrentUser().user.변수 → SCSessionManager.getCurrentUser().변수
+output = output
+  .replace(/SCSessionManager\.getCurrentUser\(\)\.user\./g, "SCSessionManager.getCurrentUser().");
+
+
   return output;
 }
