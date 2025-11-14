@@ -98,13 +98,16 @@ output = output.replace(
    *   number2Format → amt
    *   number3Format → qty
    */
-  output = output
-    // number0Format → number
-    .replace(/format-type\s*=\s*["']number0Format["']/g, 'format-type="number"')
-    // number2Format → amt
-    .replace(/format-type\s*=\s*["']number2Format["']/g, 'format-type="amt"')
-    // number3Format → qty
-    .replace(/format-type\s*=\s*["']number3Format["']/g, 'format-type="qty"');
+/**
+ * 🔹 format 문자열 단순 치환
+ *   number0Format → number
+ *   number2Format → amt
+ *   number3Format → qty
+ */
+output = output
+  .replace(/number0Format/g, "number")
+  .replace(/number2Format/g, "amt")
+  .replace(/number3Format/g, "qty");
 
 
   /**
