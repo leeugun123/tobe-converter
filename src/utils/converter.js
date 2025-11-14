@@ -248,6 +248,21 @@ output = output.replace(
   "var $1 = event.detail;"
 );
 
+/**
+ * 🔹 변수1.addItem(변수2) → 변수1.push(변수2)
+ */
+output = output.replace(
+  /\b(\w+)\.addItem\s*\(\s*([\w.]+)\s*\)\s*;?/g,
+  "$1.push($2);"
+);
+
+// 🔹 if (event.detail == Alert.CANCEL) return;   →   (해당 라인 삭제)
+output = output.replace(
+  /^\s*if\s*\(\s*event\.detail\s*==\s*Alert\.CANCEL\s*\)\s*return\s*;\s*$/gm,
+  ""
+);
+
+
 
   return output;
 }
