@@ -274,8 +274,12 @@ output = output.replace(
 // 🔹 {{isItemStyle}} → isItemStyle
 output = output.replace(/\{\{\s*(isItemEditable|isItemStyle)\s*\}\}/g, "$1");
 
-
-
+// 🔹 this.$.변수1.selectedChild = this.$.변수2;
+//     → this.$.변수1.selectItem(this.$.변수2);
+output = output.replace(
+  /this\.\$\.(\w+)\.selectedChild\s*=\s*this\.\$\.(\w+)/g,
+  "this.$.$1.selectItem(this.$.$2)"
+);
 
   return output;
 }
