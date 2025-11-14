@@ -103,12 +103,13 @@ output = output.replace(
  *   number0Format → number
  *   number2Format → amt
  *   number3Format → qty
+ *   number4Format → scoreDecimal
  */
 output = output
   .replace(/number0Format/g, "number")
   .replace(/number2Format/g, "amt")
-  .replace(/number3Format/g, "qty");
-
+  .replace(/number3Format/g, "qty")
+  .replace(/number4Format/g, "scoreDecimal");
 
   /**
    *  그리드 관련 속성 정리
