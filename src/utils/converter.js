@@ -270,6 +270,10 @@ output = output.replace(
   `$1.filter(obj => obj.$2 == "$3")`
 );
 
+// 🔹 {{isItemEditable}} → isItemEditable
+// 🔹 {{isItemStyle}} → isItemStyle
+output = output.replace(/\{\{\s*(isItemEditable|isItemStyle)\s*\}\}/g, "$1");
+
 
 
 
