@@ -262,6 +262,15 @@ output = output.replace(
   ""
 );
 
+// 🔹 변수1.filterItems({ 변수2: "변수3" })
+//    → 변수1.filter(obj => obj.변수2 == "변수3")
+
+output = output.replace(
+  /(\w+)\.filterItems\s*\(\s*\{\s*(\w+)\s*:\s*["']([^"']+)["']\s*\}\s*\)/g,
+  `$1.filter(obj => obj.$2 == "$3")`
+);
+
+
 
 
   return output;
