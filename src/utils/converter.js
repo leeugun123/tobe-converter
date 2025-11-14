@@ -240,5 +240,14 @@ output = output.replace(
   (match, p1) => `UT.copy(${p1})`
 );
 
+/**
+ * 🔹 var 변수 = event.object.items; → var 변수 = event.detail;
+ */
+output = output.replace(
+  /\bvar\s+(\w+)\s*=\s*event\.object\.items\s*;?/g,
+  "var $1 = event.detail;"
+);
+
+
   return output;
 }
