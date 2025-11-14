@@ -231,5 +231,14 @@ output = output.replace(
   (match, quote, before, after) => `${quote}${before}&#13;${after}${quote}`
 );
 
+/**
+ * 🔹 변수.clone() → UT.copy(변수)
+ *    this.변수.clone() → UT.copy(this.변수)
+ */
+output = output.replace(
+  /\b(this\.\w+|\w+)\.clone\s*\(\s*\)/g,
+  (match, p1) => `UT.copy(${p1})`
+);
+
   return output;
 }
