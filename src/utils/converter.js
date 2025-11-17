@@ -92,12 +92,6 @@ output = output.replace(
    */
   output = output.replace(/,\s*behaviors\s*:\s*\[\s*\]/g, "");
 
-  /**
-   * 🔹 format-type 값에 따라 자동 변경
-   *   number0Format → number
-   *   number2Format → amt
-   *   number3Format → qty
-   */
 /**
  * 🔹 format 문자열 단순 치환
  *   number0Format → number
@@ -107,8 +101,8 @@ output = output.replace(
  */
 output = output
   .replace(/number0Format/g, "number")
-  .replace(/number2Format/g, "amt")
-  .replace(/number3Format/g, "qty")
+  .replace(/number1Format/g, "amt")
+  .replace(/number2Format/g, "qty")
   .replace(/number4Format/g, "scoreDecimal");
 
   /**
