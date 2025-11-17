@@ -124,6 +124,12 @@ output = output
     "fire('close')"
   );
 
+  // dispatchEvent(new SCEvent(...)) → fire('...', ...) 변환 규칙
+  output = output.replace(
+    /this\.dispatchEvent\s*\(\s*new\s+SCEvent\s*\(\s*["']([^"']+)["']\s*,\s*([^)]+?)\s*\)\s*\)/g,
+    "this.fire('$1', $2)"
+  );
+
   // ✅ Application.application.mdi.mdiContent → UT.createWindow
   output = output.replace(
     /openView\s*:\s*function\s*\([^)]*\)\s*\{[\s\S]*?Application\.application\.mdi\.mdiContent\.createWindow\([^)]*\);\s*\}/g,
