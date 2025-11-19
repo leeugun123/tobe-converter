@@ -111,6 +111,7 @@ output = output
   .replace(/number0Format/g, "number")
   .replace(/number1Format/g, "amt")
   .replace(/number2Format/g, "qty")
+  .replace(/number3Format/g, "metric")
   .replace(/number4Format/g, "scoreDecimal");
 
   /**
