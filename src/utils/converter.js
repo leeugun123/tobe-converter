@@ -133,11 +133,23 @@ output = output
     "fire('close')"
   );
 
-  // dispatchEvent(new SCEvent(...)) → fire('...', ...) 변환 규칙
   output = output.replace(
     /this\.dispatchEvent\s*\(\s*new\s+SCEvent\s*\(\s*["']([^"']+)["']\s*,\s*([^)]+?)\s*\)\s*\)/g,
-    "this.fire('$1', $2)"
-  );
+    (match, eventName, eventData) => {
+        // 이벤트명을 kebab-case로 변환
+        const toKebabCase = str => str
+            .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+            .replace(/[_\s]+/g, '-')
+            .toLowerCase();
+
+        const kebabEvent = toKebabCase(eventName.trim());
+
+        // 이벤트 데이터가 실제 변수 이름이라면 그대로 사용
+        const data = eventData.trim();
+
+        return `this.fire('${kebabEvent}', ${data})`;
+    }
+);
 
   // ✅ Application.application.mdi.mdiContent → UT.createWindow
   output = output.replace(
