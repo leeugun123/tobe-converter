@@ -300,5 +300,11 @@ output = output.replace(
 output = output
   .replace(/SCSessionManager\.getCurrentUser\(\)\.user\./g, "SCSessionManager.getCurrentUser().");
 
+// 🔹 변수.getItemAt(인덱스) → 변수[인덱스]
+output = output.replace(
+  /(\b[\w$.]+)\.getItemAt\s*\(\s*([^)]+?)\s*\)/g,
+  "$1[$2]"
+);
+
   return output;
 }
