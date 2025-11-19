@@ -9,7 +9,7 @@
         왼쪽에 HTML을 붙여넣으면 자동 변환됩니다.
       </div>
     </div>
-    
+
     <!-- 좌우 50:50 -->
     <div class="row q-col-gutter-xl q-px-md">
       <!-- 왼쪽: 입력 영역 -->
@@ -61,7 +61,6 @@
       @click="copyToClipboard"
       :disable="!converted"
     />
-            
   </q-page>
 </template>
 
@@ -141,13 +140,4 @@ async function copyToClipboard() {
 .textarea-box.output {
   background-color: #f9fafb;
 }
-
-/* 🔹 복사 버튼 오른쪽 하단 고정 (fixed로 변경하여 항상 보이도록) */
-.copy-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 999;
-}
-
 </style>
