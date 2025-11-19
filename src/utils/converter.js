@@ -4,6 +4,14 @@
 export function convertFile(inputHtml) {
   let output = inputHtml;
 
+output = output.replace(
+  /SCAlert\.show\(\s*["']([^"']+)["']\s*,\s*["'][^"']+["']\s*,\s*true\s*,\s*Alert\.YES\s*\|\s*Alert\.CANCEL\s*,\s*null\s*,\s*this\.(\w+)\s*\)/g,
+`var me = this;
+UT.confirm(this.translate("$1"), function(){
+    me.$2();
+})`
+);
+
  /**
  * 12️⃣ SCSession.user["..."] → session.prop
  *    단, session 객체 선언이 없는 경우 SCSessionManager.getCurrentUser().prop 으로 대체
@@ -95,8 +103,8 @@ output = output.replace(
 /**
  * 🔹 format 문자열 단순 치환
  *   number0Format → number
- *   number2Format → amt
- *   number3Format → qty
+ *   number1Format → amt
+ *   number2Format → qty
  *   number4Format → scoreDecimal
  */
 output = output
@@ -291,7 +299,6 @@ output = output.replace(
 // 🔹 SCSessionManager.getCurrentUser().user.변수 → SCSessionManager.getCurrentUser().변수
 output = output
   .replace(/SCSessionManager\.getCurrentUser\(\)\.user\./g, "SCSessionManager.getCurrentUser().");
-
 
   return output;
 }
