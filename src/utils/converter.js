@@ -4,31 +4,35 @@
 export function convertFile(inputHtml) {
   let output = inputHtml;
 
-output = output.replace(
-  /SCAlert\.show\(\s*["']([^"']+)["']\s*,\s*["'][^"']+["']\s*,\s*true\s*,\s*Alert\.YES\s*\|\s*Alert\.CANCEL\s*,\s*null\s*,\s*this\.(\w+)\s*\)/g,
-`var me = this;
-UT.confirm(this.translate("$1"), function(){
-    me.$2();
+  output = output.replace(
+    /SCAlert\.show\(\s*(?:this\.translator\.translate\(\s*["']([^"']+)["']\s*\)|["']([^"']+)["'])\s*,\s*["'][^"']+["']\s*,\s*true\s*,\s*Alert\.YES\s*\|\s*Alert\.CANCEL\s*,\s*null\s*,\s*this\.(\w+)\s*\)/g,
+    `var me = this;
+UT.confirm(this.translate("$1$2"), function(){
+    me.$3();
 })`
-);
-
- /**
- * 12️⃣ SCSession.user["..."] → session.prop
- *    단, session 객체 선언이 없는 경우 SCSessionManager.getCurrentUser().prop 으로 대체
- */
-if (/session\s*:\s*\{\s*type\s*:\s*Object\s*,\s*value\s*:\s*function\s*\(\)\s*\{\s*return\s+SCSession\.getInstance\s*\(\)\s*;?\s*\}\s*\}/.test(output)) {
-  // ✅ session 정의 존재 → this.session 사용
-  output = output.replace(
-    /this\.session\.user\[['"](\w+)['"]\]/g,
-    "this.session.$1"
-  ); 
-} else {
-  // ❌ session 정의 없음 → SCSessionManager.getCurrentUser() 사용
-  output = output.replace(
-    /this\.session\.user\[['"](\w+)['"]\]/g,
-    "SCSessionManager.getCurrentUser().$1"
   );
-}
+
+  /**
+   * 12️⃣ SCSession.user["..."] → session.prop
+   *    단, session 객체 선언이 없는 경우 SCSessionManager.getCurrentUser().prop 으로 대체
+   */
+  if (
+    /session\s*:\s*\{\s*type\s*:\s*Object\s*,\s*value\s*:\s*function\s*\(\)\s*\{\s*return\s+SCSession\.getInstance\s*\(\)\s*;?\s*\}\s*\}/.test(
+      output
+    )
+  ) {
+    // ✅ session 정의 존재 → this.session 사용
+    output = output.replace(
+      /this\.session\.user\[['"](\w+)['"]\]/g,
+      "this.session.$1"
+    );
+  } else {
+    // ❌ session 정의 없음 → SCSessionManager.getCurrentUser() 사용
+    output = output.replace(
+      /this\.session\.user\[['"](\w+)['"]\]/g,
+      "SCSessionManager.getCurrentUser().$1"
+    );
+  }
 
   /**
    * 3️⃣ SCSession → SCSessionManager
@@ -61,31 +65,24 @@ if (/session\s*:\s*\{\s*type\s*:\s*Object\s*,\s*value\s*:\s*function\s*\(\)\s*\{
       "var $1 = event.detail.data;"
     );
 
-// 1) this.translator.translate(...)   -> this.translate(...)
-output = output.replace(
-  /\bthis\s*\.\s*translator\s*\.\s*translate\s*\(/g,
-  "this.translate("
-);
+  // 1) this.translator.translate(...)   -> this.translate(...)
+  output = output.replace(
+    /\bthis\s*\.\s*translator\s*\.\s*translate\s*\(/g,
+    "this.translate("
+  );
 
-// 2) translator.translate(...)        -> this.translate(...)
-output = output.replace(
-  /\btranslator\s*\.\s*translate\s*\(/g,
-  "this.translate("
-);
+  // 2) translator.translate(...)        -> this.translate(...)
+  output = output.replace(
+    /\btranslator\s*\.\s*translate\s*\(/g,
+    "this.translate("
+  );
 
-// 3) SCAlert.show(...) -> UT.alert(...) (이미 하셨다면 중복 적용되지 않음)
-output = output.replace(
-  /\bSCAlert\.show\s*\(/g,
-  "UT.alert("
-);
+  // 3) SCAlert.show(...) -> UT.alert(...) (이미 하셨다면 중복 적용되지 않음)
+  output = output.replace(/\bSCAlert\.show\s*\(/g, "UT.alert(");
 
-// (선택적) 3) 동일한 문제를 세미콜론 없이 끝나는 표현에서도 정리
-//     예: foo(this.translate("...")));  -> foo(this.translate("..."));
-output = output.replace(
-  /(this\.translate\([^)]*\))\)\s*(?=[\r\n]|$)/g,
-  '$1'
-);
-
+  // (선택적) 3) 동일한 문제를 세미콜론 없이 끝나는 표현에서도 정리
+  //     예: foo(this.translate("...")));  -> foo(this.translate("..."));
+  output = output.replace(/(this\.translate\([^)]*\))\)\s*(?=[\r\n]|$)/g, "$1");
 
   /**
    * 8️⃣ Polymer var 제거
@@ -100,19 +97,19 @@ output = output.replace(
    */
   output = output.replace(/,\s*behaviors\s*:\s*\[\s*\]/g, "");
 
-/**
- * 🔹 format 문자열 단순 치환
- *   number0Format → number
- *   number1Format → amt
- *   number2Format → qty
- *   number4Format → scoreDecimal
- */
-output = output
-  .replace(/number0Format/g, "number")
-  .replace(/number1Format/g, "amt")
-  .replace(/number2Format/g, "qty")
-  .replace(/number3Format/g, "metric")
-  .replace(/number4Format/g, "scoreDecimal");
+  /**
+   * 🔹 format 문자열 단순 치환
+   *   number0Format → number
+   *   number1Format → amt
+   *   number2Format → qty
+   *   number4Format → scoreDecimal
+   */
+  output = output
+    .replace(/number0Format/g, "number")
+    .replace(/number1Format/g, "amt")
+    .replace(/number2Format/g, "qty")
+    .replace(/number3Format/g, "metric")
+    .replace(/number4Format/g, "scoreDecimal");
 
   /**
    *  그리드 관련 속성 정리
@@ -133,24 +130,24 @@ output = output
     "fire('close')"
   );
 
- output = output.replace(
+  output = output.replace(
     /this\.dispatchEvent\s*\(\s*new\s+SCEvent\s*\(\s*["']([^"']+)["'](?:\s*,\s*([^)]+?))?\s*\)\s*\)/g,
     (match, eventName, eventData) => {
-        const toKebabCase = str => str
-            .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-            .replace(/[_\s]+/g, '-')
-            .toLowerCase();
+      const toKebabCase = (str) =>
+        str
+          .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+          .replace(/[_\s]+/g, "-")
+          .toLowerCase();
 
-        const kebabEvent = toKebabCase(eventName.trim());
+      const kebabEvent = toKebabCase(eventName.trim());
 
-        if (eventData) {
-            return `this.fire('${kebabEvent}', ${eventData.trim()})`;
-        } else {
-            return `this.fire('${kebabEvent}')`;
-        }
+      if (eventData) {
+        return `this.fire('${kebabEvent}', ${eventData.trim()})`;
+      } else {
+        return `this.fire('${kebabEvent}')`;
+      }
     }
-);
-
+  );
 
   // ✅ Application.application.mdi.mdiContent → UT.createWindow
   output = output.replace(
@@ -246,79 +243,77 @@ output = output
     "this.$1.filter(obj => obj.$2 === item.$3)"
   );
 
-
   // replace both literal "\n" (backslash + n) and actual newlines inside attribute values
- // "..." 또는 '...' 안에 있는 \n 만 치환
-output = output.replace(
-  /(["'])([^"']*?)\\n([^"']*?)\1/g,
-  (match, quote, before, after) => `${quote}${before}&#13;${after}${quote}`
-);
+  // "..." 또는 '...' 안에 있는 \n 만 치환
+  output = output.replace(
+    /(["'])([^"']*?)\\n([^"']*?)\1/g,
+    (match, quote, before, after) => `${quote}${before}&#13;${after}${quote}`
+  );
 
-/**
- * 🔹 변수.clone() → UT.copy(변수)
- *    this.변수.clone() → UT.copy(this.변수)
- */
-output = output.replace(
-  /\b(this\.\w+|\w+)\.clone\s*\(\s*\)/g,
-  (match, p1) => `UT.copy(${p1})`
-);
+  /**
+   * 🔹 변수.clone() → UT.copy(변수)
+   *    this.변수.clone() → UT.copy(this.변수)
+   */
+  output = output.replace(
+    /\b(this\.\w+|\w+)\.clone\s*\(\s*\)/g,
+    (match, p1) => `UT.copy(${p1})`
+  );
 
-/**
- * 🔹 var 변수 = event.object.items; → var 변수 = event.detail;
- */
-output = output.replace(
-  /\bvar\s+(\w+)\s*=\s*event\.object\.items\s*;?/g,
-  "var $1 = event.detail;"
-);
+  /**
+   * 🔹 var 변수 = event.object.items; → var 변수 = event.detail;
+   */
+  output = output.replace(
+    /\bvar\s+(\w+)\s*=\s*event\.object\.items\s*;?/g,
+    "var $1 = event.detail;"
+  );
 
-/**
- * 🔹 변수1.addItem(변수2) → 변수1.push(변수2)
- */
-output = output.replace(
-  /\b(\w+)\.addItem\s*\(\s*([\w.]+)\s*\)\s*;?/g,
-  "$1.push($2);"
-);
+  /**
+   * 🔹 변수1.addItem(변수2) → 변수1.push(변수2)
+   */
+  output = output.replace(
+    /\b(\w+)\.addItem\s*\(\s*([\w.]+)\s*\)\s*;?/g,
+    "$1.push($2);"
+  );
 
-// 🔹 if (event.detail == Alert.CANCEL) return;   →   (해당 라인 삭제)
-output = output.replace(
-  /^\s*if\s*\(\s*event\.detail\s*==\s*Alert\.CANCEL\s*\)\s*return\s*;\s*$/gm,
-  ""
-);
+  // 🔹 if (event.detail == Alert.CANCEL) return;   →   (해당 라인 삭제)
+  output = output.replace(
+    /^\s*if\s*\(\s*event\.detail\s*==\s*Alert\.CANCEL\s*\)\s*return\s*;\s*$/gm,
+    ""
+  );
 
-// 🔹 변수1.filterItems({ 변수2: "변수3" })
-//    → 변수1.filter(obj => obj.변수2 == "변수3")
+  // 🔹 변수1.filterItems({ 변수2: "변수3" })
+  //    → 변수1.filter(obj => obj.변수2 == "변수3")
 
-output = output.replace(
-  /(\w+)\.filterItems\s*\(\s*\{\s*(\w+)\s*:\s*["']([^"']+)["']\s*\}\s*\)/g,
-  `$1.filter(obj => obj.$2 == "$3")`
-);
+  output = output.replace(
+    /(\w+)\.filterItems\s*\(\s*\{\s*(\w+)\s*:\s*["']([^"']+)["']\s*\}\s*\)/g,
+    `$1.filter(obj => obj.$2 == "$3")`
+  );
 
-// 🔹 {{isItemEditable}} → isItemEditable
-// 🔹 {{isItemStyle}} → isItemStyle
-output = output.replace(/\{\{\s*(isItemEditable|isItemStyle)\s*\}\}/g, "$1");
+  // 🔹 {{isItemEditable}} → isItemEditable
+  // 🔹 {{isItemStyle}} → isItemStyle
+  output = output.replace(/\{\{\s*(isItemEditable|isItemStyle)\s*\}\}/g, "$1");
 
-// 🔹 this.$.변수1.selectedChild = this.$.변수2;
-//     → this.$.변수1.selectItem(this.$.변수2);
-output = output.replace(
-  /this\.\$\.(\w+)\.selectedChild\s*=\s*this\.\$\.(\w+)/g,
-  "this.$.$1.selectItem(this.$.$2)"
-);
+  // 🔹 this.$.변수1.selectedChild = this.$.변수2;
+  //     → this.$.변수1.selectItem(this.$.변수2);
+  output = output.replace(
+    /this\.\$\.(\w+)\.selectedChild\s*=\s*this\.\$\.(\w+)/g,
+    "this.$.$1.selectItem(this.$.$2)"
+  );
 
-// 🔹 this.session.user.변수 → this.session.변수
-output = output.replace(
-  /this\.session\.user\.(\w+)/g,
-  "this.session.$1"
-);
+  // 🔹 this.session.user.변수 → this.session.변수
+  output = output.replace(/this\.session\.user\.(\w+)/g, "this.session.$1");
 
-// 🔹 SCSessionManager.getCurrentUser().user.변수 → SCSessionManager.getCurrentUser().변수
-output = output
-  .replace(/SCSessionManager\.getCurrentUser\(\)\.user\./g, "SCSessionManager.getCurrentUser().");
+  // 🔹 SCSessionManager.getCurrentUser().user.변수 → SCSessionManager.getCurrentUser().변수
+  output = output.replace(
+    /SCSessionManager\.getCurrentUser\(\)\.user\./g,
+    "SCSessionManager.getCurrentUser()."
+  );
 
-// 🔹 변수.getItemAt(인덱스) → 변수[인덱스]
-output = output.replace(
-  /(\b[\w$.]+)\.getItemAt\s*\(\s*([^)]+?)\s*\)/g,
-  "$1[$2]"
-);
+  // 🔹 변수.getItemAt(인덱스) → 변수[인덱스]
+  output = output.replace(
+    /(\b[\w$.]+)\.getItemAt\s*\(\s*([^)]+?)\s*\)/g,
+    "$1[$2]"
+  );
 
   return output;
 }
