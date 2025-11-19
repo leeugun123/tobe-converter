@@ -133,10 +133,9 @@ output = output
     "fire('close')"
   );
 
-  output = output.replace(
-    /this\.dispatchEvent\s*\(\s*new\s+SCEvent\s*\(\s*["']([^"']+)["']\s*,\s*([^)]+?)\s*\)\s*\)/g,
+ output = output.replace(
+    /this\.dispatchEvent\s*\(\s*new\s+SCEvent\s*\(\s*["']([^"']+)["'](?:\s*,\s*([^)]+?))?\s*\)\s*\)/g,
     (match, eventName, eventData) => {
-        // 이벤트명을 kebab-case로 변환
         const toKebabCase = str => str
             .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
             .replace(/[_\s]+/g, '-')
@@ -144,12 +143,14 @@ output = output
 
         const kebabEvent = toKebabCase(eventName.trim());
 
-        // 이벤트 데이터가 실제 변수 이름이라면 그대로 사용
-        const data = eventData.trim();
-
-        return `this.fire('${kebabEvent}', ${data})`;
+        if (eventData) {
+            return `this.fire('${kebabEvent}', ${eventData.trim()})`;
+        } else {
+            return `this.fire('${kebabEvent}')`;
+        }
     }
 );
+
 
   // ✅ Application.application.mdi.mdiContent → UT.createWindow
   output = output.replace(
