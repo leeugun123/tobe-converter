@@ -208,14 +208,6 @@ UT.confirm(this.translate("$1$2"), function(){
   );
 
   /**
-   * 🔹 this.$.<변수명>.clearParameter(); 제거
-   */
-  output = output.replace(
-    /^[ \t]*this\.\$\.\w+\.clearParameter\s*\(\s*\)\s*;?\s*$/gm,
-    ""
-  );
-
-  /**
    * 🔹 this.$.<변수명>.bind() / this.$.<변수명>.service()
    *     → UT.request(this.$.<변수명>);
    */
