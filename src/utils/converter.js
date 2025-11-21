@@ -325,5 +325,11 @@ output = output.replace(
     "$1[$2]"
   );
 
+  // 🔹 ExternalInterface.call("getFile", "변수명") → attach.getFile("변수명")
+output = output.replace(
+  /ExternalInterface\.call\s*\(\s*["']getFile["']\s*,\s*([^)\s]+)\s*\)/g,
+  "attach.getFile($1)"
+);
+
   return output;
 }
