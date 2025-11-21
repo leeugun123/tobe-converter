@@ -209,14 +209,25 @@ output = output
     /^[ \t]*this\.\$\.\w+\.rpcService\.disabledTargetsOnInvoking\s*=\s*\[this\];?\s*$/gm,
     ""
   );
+  // 🔹 this.$.변수.rpcService.disabledTargetsOnInvoking → 제거
+output = output.replace(
+  /this\.\$\.\w+\.rpcService\.disabledTargetsOnInvoking\s*;?/g,
+  ""
+);
 
-  /**
-   * 🔹 this.$.<변수명>.clearParameter(); 제거
-   */
-  output = output.replace(
-    /^[ \t]*this\.\$\.\w+\.clearParameter\s*\(\s*\)\s*;?\s*$/gm,
-    ""
-  );
+ // 🔹 this.$.변수.clearParameter() → this.$.변수.clearInputs()
+output = output.replace(
+  /this\.\$\.(\w+)\.clearParameter\s*\(\s*\)/g,
+  "this.$.$1.clearInputs()"
+);
+
+// 🔹 this.$.변수.addParameter("x", y) → this.$.변수.addInput("x", y)
+output = output.replace(
+  /this\.\$\.(\w+)\.addParameter\s*\(\s*([^,]+)\s*,\s*([^)]+)\)/g,
+  "this.$.$1.addInput($2, $3)"
+);
+
+
 
   /**
    * 🔹 this.$.<변수명>.bind() / this.$.<변수명>.service()
