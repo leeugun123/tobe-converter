@@ -343,6 +343,16 @@ output = output.replace(
   ""
 );
 
+// YYYYMMDD → yyyyMMdd
+output = output.replace(/\bYYYYMMDD\b/g, "yyyyMMdd");
+
+// YYYYMMDD → yyyyMMdd
+output = output.replace(/\bYYYYMMDD\b/g, "yyyyMMdd");
+
+// YYYY-MM-DD → yyyy-MM-dd
+output = output.replace(/\bYYYY-MM-DD\b/g, "yyyy-MM-dd");
+
+
 
   return output;
 }
