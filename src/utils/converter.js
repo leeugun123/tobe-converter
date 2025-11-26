@@ -331,5 +331,12 @@ output = output.replace(
   "attach.getFile($1)"
 );
 
+// 🔹 Dom Module 선언부 3줄 통째로 삭제
+output = output.replace(
+  /\/\/=+\s*\n\s*\/\/\s*\[\[Dom Module 선언부\]\]\s*\n\s*\/\/=+\s*\n?/g,
+  ""
+);
+
+
   return output;
 }
