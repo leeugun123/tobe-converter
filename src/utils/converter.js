@@ -349,18 +349,17 @@ output = output
   .replace(/\bYYYY-MM-DD\b/g, "yyyy-MM-dd") // YYYY-MM-DD → yyyy-MM-dd
   .replace(/\bMM\/DD\b/g, "MM/dd");         // MM/DD → MM/dd
 
-// <th style="width : xx%;"> → <th>
+// <th ... style="width: ..."> → <th>
 output = output.replace(
-  /<th\s+style\s*=\s*["']\s*width\s*:\s*[^"']*?%?\s*;\s*["']\s*>/gi,
+  /<th[^>]*style\s*=\s*["']\s*width\s*:[^"']*["'][^>]*>/gi,
   "<th>"
 );
 
-// <td style="width : xx%;"> → <td>
+// <td ... style="width: ..."> → <td>
 output = output.replace(
-  /<td\s+style\s*=\s*["']\s*width\s*:\s*[^"']*?%?\s*;\s*["']\s*>/gi,
+  /<td[^>]*style\s*=\s*["']\s*width\s*:[^"']*["'][^>]*>/gi,
   "<td>"
 );
-
 
   return output;
 }
