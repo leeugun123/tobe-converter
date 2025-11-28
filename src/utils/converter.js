@@ -5,12 +5,13 @@ export function convertFile(inputHtml) {
   let output = inputHtml;
 
   output = output.replace(
-    /SCAlert\.show\(\s*(?:this\.translator\.translate\(\s*["']([^"']+)["']\s*\)|["']([^"']+)["'])\s*,\s*["'][^"']+["']\s*,\s*true\s*,\s*Alert\.YES\s*\|\s*Alert\.CANCEL\s*,\s*null\s*,\s*this\.(\w+)\s*\)/g,
+    /SCAlert\.show\s*\(\s*["']([^"']+)["']\s*,\s*this\.translator\.translate\(\s*["'][^"']+["']\s*\)\s*,\s*true\s*,\s*Alert\.YES\s*\|\s*Alert\.CANCEL\s*,\s*null\s*,\s*this\.(\w+)\s*\)/g,
     `var me = this;
-UT.confirm(this.translate("$1$2"), function(){
-    me.$3();
-})`
+  UT.confirm(this.translate("$1"), function(){
+      me.$2();
+  })`
   );
+  
 
   /**
    * 12️⃣ SCSession.user["..."] → session.prop
