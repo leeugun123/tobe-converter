@@ -4,13 +4,16 @@
 export function convertFile(inputHtml) {
   let output = inputHtml;
 
-  output = output.replace(
-    /SCAlert\.show\s*\(\s*["']([^"']+)["']\s*,\s*this\.translator\.translate\(\s*["'][^"']+["']\s*\)\s*,\s*true\s*,\s*Alert\.YES\s*\|\s*Alert\.CANCEL\s*,\s*null\s*,\s*this\.(\w+)\s*\)/g,
-    `var me = this;
-  UT.confirm(this.translate("$1"), function(){
-      me.$2();
-  })`
-  );
+  // SCAlert.show("메시지", this.translator.translate("타이틀"), true, Alert.YES|Alert.CANCEL, null, this.func)
+output = output.replace(
+  /SCAlert\.show\s*\(\s*["']([^"']+)["']\s*,\s*(?:this\.translator\.translate\(\s*["'][^"']+["']\s*\)|["'][^"']+["'])\s*,\s*true\s*,\s*Alert\.YES\s*\|\s*Alert\.CANCEL\s*,\s*null\s*,\s*this\.(\w+)\s*\)/g,
+  `var me = this;
+UT.confirm(this.translate("$1"), function(){
+    me.$2();
+})`
+);
+
+
   
 
   /**
